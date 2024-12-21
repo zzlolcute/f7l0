@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Background</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .warning-text {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            color: rgba(255, 0, 0, 0.9);
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.9), 0 0 20px black;
+            text-align: center;
+            animation: typeText 4s steps(30) 1, flicker 1.5s infinite;
+        }
+
+        .ip-text {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: rgba(255, 0, 0, 1);
+            text-shadow: 0 0 10px black, 0 0 20px rgba(255, 0, 0, 0.7);
+            animation: flicker 2s infinite;
+            text-align: center;
+        }
+
+        .details-text {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 22px;
+            font-weight: bold;
+            color: rgba(255, 0, 0, 1);
+            text-shadow: 0 0 10px black, 0 0 20px rgba(255, 0, 0, 0.7);
+            animation: flicker 3s infinite;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        @keyframes typeText {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop>
+        <source src="3129977-uhd_3840_2160_30fps.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="warning-text"></div>
+    <div class="ip-text" id="ip-display">Your IP: Fetching...</div>
+    <div class="details-text" id="details-display">Fetching details...</div>
+
+    <audio autoplay loop>
+        <source src="https://audio.jukehost.co.uk/4dR5BuSbPoTRW1QLXLGJPotLZLFhjcx2" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        async function fetchIPDetails() {
+            try {
+                const response = await fetch('https://ipinfo.io/json');  // بدون token
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                document.getElementById('ip-display').textContent = `Your IP: ${data.ip || 'N/A'}`;
+
+                const details = `
+                    Country: ${data.country || 'N/A'} <br>
+                    Region: ${data.region || 'N/A'} <br>
+                    City: ${data.city || 'N/A'} <br>
+                    Location: ${data.loc || 'N/A'} <br>
+                    ISP/Org: ${data.org || 'N/A'} <br>
+                    Timezone: ${data.timezone || 'N/A'}
+                `;
+                document.getElementById('details-display').innerHTML = details;
+            } catch (error) {
+                console.error('Error fetching IP details:', error);
+                document.getElementById('details-display').textContent = 'Failed to fetch details.';
+            }
+        }
+
+        window.onload = () => {
+            const warningText = document.querySelector('.warning-text');
+            typeEffect(warningText, 'YOUR SERVER HAS BEEN HACKED by f7lk discord/gg/f7l', 100);
+
+            fetchIPDetails();
+        };
+
+        function typeEffect(element, text, delay) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, delay);
+                }
+            }
+            type();
+        }
+    </script>
+</body>
+</html>
